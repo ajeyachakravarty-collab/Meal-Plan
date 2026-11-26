@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f7d5b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>MealPlan</title>
+<style>
+:root{--bg:#f6f7f5;--card:#fff;--tx:#1c1f1d;--mu:#6b726d;--ac:#2f7d5b;--ac2:#e3f1ea;--bd:#e4e7e3}
+@media(prefers-color-scheme:dark){:root{--bg:#121513;--card:#1b1f1c;--tx:#eef1ee;--mu:#98a09a;--ac:#4fb88a;--ac2:#1f3a2f;--bd:#2a302c}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:env(safe-area-inset-top,0) 0 calc(env(safe-area-inset-bottom,0) + 24px)}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px}
+h1{font-size:22px;margin:0;letter-spacing:-.3px}
+.ib{border:1px solid var(--bd);background:var(--card);color:var(--tx);width:38px;height:38px;border-radius:12px;font-size:18px}
+.wk{display:flex;align-items:center;gap:8px}
+.wk span{font-size:13px;color:var(--mu);min-width:96px;text-align:center}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:6px 0 12px}
+.day{border:1px solid var(--bd);background:var(--card);border-radius:12px;padding:8px 0;text-align:center;color:var(--tx);font:inherit}
+.day small{display:block;color:var(--mu);font-size:11px}
+.day b{font-size:16px}
+.day.on{background:var(--ac);border-color:var(--ac);color:#fff}.day.on small{color:#ffffffcc}
+.day i{display:block;width:5px;height:5px;border-radius:50%;margin:3px auto 0;background:var(--ac)}
+.day.on i{background:#fff}.day:not(.has) i{visibility:hidden}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mu{color:var(--mu);font-size:13px}
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.sh h3{margin:0;font-size:16px}
+.it{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--bd)}
+.it .n{flex:1;min-width:0}
+.x{border:0;background:none;color:var(--mu);font-size:18px;min-width:40px;min-height:40px;padding:0}
+.empty{color:var(--mu);font-size:13px;padding:6px 0 2px}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.b{border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 12px;font:inherit;font-size:13.5px}
+.b.p{background:var(--ac);color:#fff;border-color:var(--ac)}
+.ov{position:fixed;inset:0;background:#0008;display:flex;align-items:flex-end;justify-content:center;z-index:9}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:86vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0)}
+.sheet .hd{padding:14px 16px 8px;display:flex;justify-content:space-between;align-items:center}
+.sheet .hd h2{margin:0;font-size:17px}
+.sheet .bd{overflow:auto;padding:0 16px 16px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tab{flex:1;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 0;font:inherit;font-size:13.5px}
+.tab.on{background:var(--ac2);border-color:var(--ac);color:var(--ac);font-weight:600}
+input,select{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;margin-bottom:10px}
+.li{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:6px;width:100%;color:var(--tx);font:inherit;text-align:left}
+.li .t{flex:1;min-width:0}.li .s{color:var(--mu);font-size:12.5px;display:block}
+.li .a{color:var(--ac);font-size:20px;font-weight:600}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:#3aa356}.dot.nv{background:#b5412f}
+.tg{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0) + 24px);transform:translateX(-50%);background:var(--tx);color:var(--bg);padding:9px 16px;border-radius:20px;font-size:13.5px;z-index:20}
+.chk{display:flex;align-items:center;gap:8px;margin:2px 0 12px}.chk input{width:auto;margin:0}
+.gh{font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu);margin:14px 0 6px}
+.ck{display:flex;align-items:center;gap:12px;padding:11px 12px;background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:6px;min-height:48px}
+.ck input{width:20px;height:20px;margin:0;flex:none;accent-color:var(--ac)}
+.ck .t{flex:1;min-width:0}.ck .t b{font-weight:500;text-transform:capitalize}.ck .s{display:block;color:var(--mu);font-size:12.5px}
+.ck.done .t{opacity:.45;text-decoration:line-through}
+.pg{height:6px;background:var(--ac2);border-radius:6px;overflow:hidden;margin:4px 0 4px}.pg div{height:100%;background:var(--ac)}
+.gadd{display:flex;gap:8px;margin-top:8px}.gadd input{margin:0;flex:1}
+label.l{font-size:12.5px;color:var(--mu);display:block;margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+// name | slots (b=breakfast l=lunch s=snack d=dinner) | veg | tags (P=protein-rich, L=light, H=hearty)
+const F=`Idli (2 pcs)|b|1|L
+Plain dosa|b|1|L
+Masala dosa|b|1|H
+Pesarattu|b|1|PL
+Poha|b|1|L
+Upma|b|1|L
+Thepla|b|1|L
+Aloo paratha|b|1|H
+Paneer paratha|b|1|PH
+Besan chilla|b|1|P
+Moong dal chilla|b|1|PL
+Oats porridge|b|1|L
+Egg bhurji|b|0|P
+Boiled eggs|bs|0|PL
+Dhokla|bs|1|L
+Sprouts salad|bls|1|PL
+Roti|ld|1|L
+Steamed rice|ld|1|H
+Dal tadka|ld|1|P
+Dal palak|ld|1|PL
+Rajma|ld|1|PH
+Chole|ld|1|PH
+Sambar|ld|1|L
+Paneer bhurji|ld|1|P
+Palak paneer|ld|1|P
+Soya chunks curry|ld|1|P
+Mixed veg sabzi|ld|1|L
+Aloo gobi|ld|1|H
+Bhindi masala|ld|1|L
+Lauki sabzi|ld|1|L
+Curd|lds|1|PL
+Raita|ld|1|L
+Curd rice|l|1|H
+Khichdi|ld|1|L
+Veg pulao|ld|1|H
+Pav bhaji|d|1|H
+Veg biryani|l|1|H
+Chicken curry|ld|0|PH
+Chicken tikka|ld|0|P
+Fish curry|ld|0|PL
+Egg curry|ld|0|P
+Chicken biryani|l|0|H
+Roasted chana|s|1|PL
+Makhana|s|1|L
+Peanuts|s|1|P
+Sundal|s|1|PL
+Buttermilk|s|1|L
+Fruit bowl|s|1|L
+Masala chai|s|1|H
+Whey protein shake|s|1|P`.split('\n').map(r=>{const a=r.split('|');return{n:a[0],s:a[1],v:+a[2],t:a[3]}});
+
+// ingredients per dish (staples like salt, oil, turmeric and chilli powder are assumed to be at home)
+const ING=Object.fromEntries(`Idli (2 pcs)|idli batter
+Plain dosa|dosa batter
+Masala dosa|dosa batter,potato,onion
+Pesarattu|green moong,ginger,green chilli,onion
+Poha|poha,onion,potato,peanuts,lemon,curry leaves,green chilli
+Upma|rava,onion,green chilli,curry leaves
+Thepla|atta,methi leaves,curd
+Aloo paratha|atta,potato,green chilli,coriander
+Paneer paratha|atta,paneer,onion,green chilli
+Besan chilla|besan,onion,tomato,coriander
+Moong dal chilla|moong dal,onion,green chilli,coriander
+Oats porridge|oats,milk
+Egg bhurji|eggs,onion,tomato,green chilli
+Boiled eggs|eggs
+Dhokla|besan,curd,green chilli
+Sprouts salad|sprouts,onion,tomato,cucumber,lemon
+Roti|atta
+Steamed rice|rice
+Dal tadka|toor dal,onion,tomato,garlic
+Dal palak|toor dal,spinach,onion,garlic
+Rajma|rajma,onion,tomato,ginger,garlic
+Chole|chickpeas,onion,tomato,ginger,garlic
+Sambar|toor dal,mixed vegetables,tamarind,tomato,onion,sambar powder
+Paneer bhurji|paneer,onion,tomato,green chilli,capsicum
+Palak paneer|paneer,spinach,onion,tomato,garlic
+Soya chunks curry|soya chunks,onion,tomato,ginger,garlic
+Mixed veg sabzi|mixed vegetables,onion,tomato
+Aloo gobi|potato,cauliflower,onion,tomato
+Bhindi masala|bhindi,onion,tomato
+Lauki sabzi|lauki,onion,tomato
+Curd|curd
+Raita|curd,cucumber,onion
+Curd rice|rice,curd,curry leaves,green chilli
+Khichdi|rice,moong dal,ghee
+Veg pulao|rice,mixed vegetables,onion,green chilli,whole spices
+Pav bhaji|potato,cauliflower,peas,tomato,onion,capsicum,pav,butter,pav bhaji masala
+Veg biryani|rice,mixed vegetables,onion,curd,mint,biryani masala
+Chicken curry|chicken,onion,tomato,ginger,garlic
+Chicken tikka|chicken,curd,lemon,ginger,garlic
+Fish curry|fish,onion,tomato,tamarind
+Egg curry|eggs,onion,tomato,ginger,garlic
+Chicken biryani|chicken,rice,onion,curd,mint,biryani masala
+Roasted chana|roasted chana
+Makhana|makhana
+Peanuts|peanuts
+Sundal|chickpeas,coconut,curry leaves,green chilli
+Buttermilk|curd
+Fruit bowl|seasonal fruit
+Masala chai|milk,tea leaves,ginger
+Whey protein shake|whey protein,milk`.split('\n').map(r=>{const a=r.split('|');return[a[0],a[1].split(',')]}));
+const GC={'Vegetables, fruit & herbs':'potato,onion,tomato,cauliflower,peas,capsicum,spinach,bhindi,lauki,cucumber,mixed vegetables,methi leaves,coriander,mint,curry leaves,green chilli,ginger,garlic,lemon,sprouts,seasonal fruit,coconut',
+'Dairy & eggs':'curd,milk,paneer,eggs,ghee,butter',
+'Grains, pulses & dry goods':'atta,rice,rava,poha,oats,besan,toor dal,moong dal,green moong,rajma,chickpeas,soya chunks,roasted chana,idli batter,dosa batter,pav,makhana,peanuts',
+'Meat & fish':'chicken,fish',
+'Spices & pantry':'tamarind,sambar powder,biryani masala,pav bhaji masala,whole spices,tea leaves,whey protein'};
+const CAT={};for(const k in GC)GC[k].split(',').forEach(i=>CAT[i]=k);
+const SL={b:['Breakfast','🌅'],l:['Lunch','🍛'],s:['Snacks','🥜'],d:['Dinner','🌙']};
+const GOALS={any:['Variety',''],P:['High protein','P'],L:['Light & healthy','L'],H:['Hearty & filling','H']};
+const WHY={any:'mixing it up — least-recently planned first',P:'protein-rich picks',L:'light, easy-on-the-stomach picks',H:'hearty, filling picks'};
+let S={plan:{},saved:[],custom:[],goal:'any',veg:0,gchk:{},gman:[]};
+try{Object.assign(S,JSON.parse(localStorage.getItem('mealplan')||'{}'))}catch(e){}
+if(!GOALS[S.goal])S.goal='any';
+if(!S.plan||typeof S.plan!=='object')S.plan={};
+for(const d in S.plan){const o=S.plan[d]||{};S.plan[d]={};for(const k of ['b','l','s','d'])S.plan[d][k]=Array.isArray(o[k])?o[k]:[]}
+if(!S.gchk||typeof S.gchk!=='object')S.gchk={};S.gman=Array.isArray(S.gman)?S.gman:[];S.saved=Array.isArray(S.saved)?S.saved:[];S.custom=Array.isArray(S.custom)?S.custom:[];
+const save=()=>{try{localStorage.setItem('mealplan',JSON.stringify(S))}catch(e){}};
+const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+const parse=s=>{const [y,m,d]=s.split('-');return new Date(+y,+m-1,+d)};
+const lab=s=>parse(s).toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+const mon=d=>{const x=new Date(d);x.setDate(x.getDate()-((x.getDay()+6)%7));return x};
+let cur=iso(new Date()),ws=mon(new Date()),ctx={slot:'b',tab:'s',q:''};
+const day=d=>{const p=S.plan[d]||(S.plan[d]={b:[],l:[],s:[],d:[]});return p};
+const count=d=>Object.values(S.plan[d]||{}).flat().length;
+const lib=()=>F.concat(S.custom.map(c=>({n:c.n,s:'blsd',v:c.v,t:''})));
+const ingOf=n=>ING[n]||(S.custom.find(c=>c.n==n)||{}).i||[];
+function toast(t){const e=document.createElement('div');e.className='tg';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),1400)}
+
+function render(){
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);return iso(d)});
+  const dd=day(cur),filled=Object.values(dd).filter(a=>a.length).length;
+  let h=`<header><h1>🍽️ MealPlan</h1><div class="wk"><button class="ib" onclick="openGrocery()" aria-label="Grocery list">🛒</button><button class="ib" onclick="openSettings()" aria-label="Settings">⚙️</button></div></header>
+  <div class="row" style="margin-bottom:8px"><div class="wk"><button class="ib" onclick="wk(-7)">‹</button><span>${lab(days[0])} – ${lab(days[6])}</span><button class="ib" onclick="wk(7)">›</button></div><button class="b" onclick="ws=mon(new Date());cur=iso(new Date());render()">Today</button></div>
+  <div class="days">${days.map(d=>{const dt=parse(d);return`<button class="day ${d==cur?'on':''} ${count(d)?'has':''}" onclick="cur='${d}';render()"><small>${dt.toLocaleDateString('en-IN',{weekday:'narrow'})}</small><b>${dt.getDate()}</b><i></i></button>`}).join('')}</div>
+  <div class="card"><div class="row"><div><b style="font-size:17px">${lab(cur)}</b><div class="mu">${filled} of 4 meals planned</div></div></div>
+  <div class="btns"><button class="b" onclick="openCopy(null)">📋 Copy day from…</button><button class="b" onclick="clearDay()">Clear day</button></div></div>`;
+  for(const s in SL){
+    const it=dd[s];
+    h+=`<div class="card"><div class="sh"><h3>${SL[s][1]} ${SL[s][0]}</h3></div>
+    ${it.length?it.map((x,i)=>`<div class="it"><span class="n">${esc(x.n)}</span><button class="x" onclick="del('${s}',${i})" aria-label="Remove">✕</button></div>`).join(''):'<div class="empty">Nothing planned</div>'}
+    <div class="btns"><button class="b p" onclick="openAdd('${s}')">+ Add</button><button class="b" onclick="openCopy('${s}')">Copy from…</button>${it.length?`<button class="b" onclick="saveMeal('${s}')">★ Save meal</button>`:''}</div></div>`;
+  }
+  $('app').innerHTML=h;
+}
+const wk=n=>{ws.setDate(ws.getDate()+n);cur=iso(ws);render()};
+function del(s,i){day(cur)[s].splice(i,1);save();render()}
+function clearDay(){if(confirm('Clear all meals for this day?')){S.plan[cur]={b:[],l:[],s:[],d:[]};save();render()}}
+
+function sheet(title,body){
+  let o=$('ov');if(!o){o=document.createElement('div');o.id='ov';o.className='ov';o.onclick=e=>{if(e.target===o)closeS()};document.body.appendChild(o)}
+  o.innerHTML=`<div class="sheet"><div class="hd"><h2>${title}</h2><button class="b" onclick="closeS()">Done</button></div><div class="bd">${body}</div></div>`;
+}
+function closeS(){const o=$('ov');if(o)o.remove();render()}
+
+// Suggestions: match the goal tag, skip what's already planned today, push down anything eaten in the last 3 days
+function suggest(s){
+  const tag=GOALS[S.goal][1],today=new Set(Object.values(day(cur)).flat().map(x=>x.n));
+  const recent={};
+  for(let i=-3;i<=3;i++){if(!i)continue;const d=new Date(parse(cur));d.setDate(d.getDate()+i);(Object.values(S.plan[iso(d)]||{}).flat()).forEach(x=>recent[x.n]=(recent[x.n]||0)+1)}
+  return lib().filter(f=>f.s.includes(s)&&(!S.veg||f.v)&&!today.has(f.n))
+    .map(f=>({f,sc:(tag&&!f.t.includes(tag)?3:0)+(recent[f.n]||0)*2+Math.random()}))
+    .sort((a,b)=>a.sc-b.sc).slice(0,10).map(o=>o.f);
+}
+function openAdd(s){ctx.slot=s;ctx.tab='s';ctx.q='';addView()}
+function addView(){
+  const sc=document.querySelector('.sheet .bd'),top=sc?sc.scrollTop:0;
+  const s=ctx.slot,L=lib();
+  let body=`<div class="tabs">${[['s','✨ Suggested'],['l','📚 Library'],['m','★ Saved']].map(t=>`<button class="tab ${ctx.tab==t[0]?'on':''}" onclick="ctx.tab='${t[0]}';addView()">${t[1]}</button>`).join('')}</div>`;
+  const row=f=>`<button class="li" onclick="addF(${L.indexOf(f)})"><span class="t"><span class="dot ${f.v?'':'nv'}"></span>${esc(f.n)}</span><span class="a">+</span></button>`;
+  if(ctx.tab=='s'){
+    body+=`<p class="mu" style="margin:0 0 10px">Goal: ${GOALS[S.goal][0]} — ${WHY[S.goal]}. Tap Suggested again to reshuffle.</p>`+suggest(s).map(row).join('');
+  }else if(ctx.tab=='l'){
+    body+=`<input placeholder="Search Indian foods…" value="${esc(ctx.q)}" oninput="ctx.q=this.value;libList()"><div id="ll"></div><button class="b" style="width:100%" onclick="addCustom()">+ Add your own dish</button>`;
+  }else{
+    body+=S.saved.length?S.saved.map((x,i)=>`<div class="li"><span class="t">${esc(x.name)}<span class="s">${x.items.map(y=>esc(y.n)).join(', ')}</span></span><span><button class="b" onclick="useMeal(${i})">Add</button> <button class="x" onclick="delMeal(${i})">✕</button></span></div>`).join(''):'<div class="empty">No saved meals yet. Tap “★ Save meal” on any meal.</div>';
+  }
+  sheet('Add to '+SL[s][0],body);
+  if(ctx.tab=='l')libList();
+  const nb=document.querySelector('.sheet .bd');if(nb)nb.scrollTop=top;
+}
+function libList(){
+  const L=lib(),q=ctx.q.toLowerCase();
+  const r=L.map((f,i)=>({f,i})).filter(o=>(!S.veg||o.f.v)&&o.f.n.toLowerCase().includes(q));
+  $('ll').innerHTML=r.map(o=>`<button class="li" onclick="addF(${o.i})"><span class="t"><span class="dot ${o.f.v?'':'nv'}"></span>${esc(o.f.n)}</span><span class="a">+</span></button>`).join('')||'<div class="empty">No match</div>';
+}
+function addF(i){const f=lib()[i];day(cur)[ctx.slot].push({n:f.n});save();toast('Added '+f.n);if(ctx.tab=='s')addView()}
+function addCustom(){
+  const n=prompt('Dish name');if(!n)return;
+  const i=(prompt('Main ingredients, comma-separated (optional, used for the grocery list)')||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean);
+  S.custom.push({n,v:confirm('Is it vegetarian?')?1:0,i});save();libList();
+}
+function saveMeal(s){
+  const n=prompt('Name this meal (e.g. “Sunday brunch”)');if(!n)return;
+  S.saved.push({name:n,items:day(cur)[s].map(x=>({n:x.n}))});save();toast('Saved “'+n+'”');
+}
+function useMeal(i){S.saved[i].items.forEach(x=>day(cur)[ctx.slot].push({n:x.n}));save();toast('Added meal')}
+function delMeal(i){if(confirm('Delete saved meal?')){S.saved.splice(i,1);save();addView()}}
+
+function openCopy(s){
+  const ds=Object.keys(S.plan).filter(d=>d!=cur&&(s?S.plan[d][s].length:count(d))).sort().reverse();
+  const body=ds.length?ds.map(d=>`<button class="li" onclick="doCopy('${d}',${s?`'${s}'`:'null'})"><span class="t">${lab(d)}<span class="s">${(s?S.plan[d][s]:Object.values(S.plan[d]).flat()).map(x=>esc(x.n)).join(', ')}</span></span><span class="a">⧉</span></button>`).join(''):'<div class="empty">No other days have meals yet.</div>';
+  sheet(s?'Copy '+SL[s][0]+' from…':'Copy full day from…',body);
+}
+function doCopy(d,s){
+  const src=S.plan[d],dst=day(cur);
+  (s?[s]:Object.keys(SL)).forEach(k=>src[k].forEach(x=>dst[k].push({n:x.n})));
+  save();toast('Copied from '+lab(d));closeS();
+}
+
+// ---------- Grocery list ----------
+function gdata(){
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(ws);d.setDate(d.getDate()+i);return iso(d)}),wk0=iso(ws),m={},miss=new Set();let meals=0;
+  days.forEach(d=>Object.values(S.plan[d]||{}).flat().forEach(x=>{meals++;const g=ingOf(x.n);if(!g.length)miss.add(x.n);g.forEach(i=>(m[i]=m[i]||new Set()).add(x.n))}));
+  const groups={};Object.keys(m).sort().forEach(g=>{const c=CAT[g]||'Other';(groups[c]=groups[c]||[]).push({g,d:[...m[g]],k:wk0+'|'+g})});
+  return{days,meals,groups,order:[...Object.keys(GC),'Other'].filter(c=>groups[c]),miss:[...miss]};
+}
+function openGrocery(){gView()}
+function gView(){
+  const sc=document.querySelector('.sheet .bd'),top=sc?sc.scrollTop:0;
+  const D=gdata();ctx.gk=[];
+  const all=D.order.flatMap(c=>D.groups[c]);
+  const done=all.filter(o=>S.gchk[o.k]).length+S.gman.filter(x=>x.d).length,total=all.length+S.gman.length;
+  let b=`<div class="row" style="margin-bottom:8px"><div class="wk"><button class="ib" onclick="gwk(-7)">‹</button><span>${lab(D.days[0])} – ${lab(D.days[6])}</span><button class="ib" onclick="gwk(7)">›</button></div><span class="mu">${done} of ${total} done</span></div>`;
+  b+=`<div class="pg"><div style="width:${total?done/total*100:0}%"></div></div>`;
+  if(!D.meals)b+='<div class="empty" style="padding:14px 0">No meals planned for this week yet. Plan some meals and the ingredients show up here.</div>';
+  D.order.forEach(c=>{
+    b+=`<div class="gh">${esc(c)}</div>`;
+    D.groups[c].forEach(o=>{ctx.gk.push(o.k);const i=ctx.gk.length-1,t=!!S.gchk[o.k];
+      b+=`<label class="ck ${t?'done':''}"><input type="checkbox" ${t?'checked':''} onchange="gtick(${i},this.checked)"><span class="t"><b>${esc(o.g)}</b><span class="s">${o.d.slice(0,3).map(esc).join(', ')}${o.d.length>3?' +'+(o.d.length-3):''}</span></span></label>`});
+  });
+  if(D.miss.length)b+=`<p class="mu" style="margin:10px 0 0">No ingredients listed for: ${D.miss.map(esc).join(', ')}. Add them below.</p>`;
+  b+=`<div class="gh">Other items</div>`+S.gman.map((x,i)=>`<div class="ck ${x.d?'done':''}"><input type="checkbox" ${x.d?'checked':''} onchange="gmtick(${i},this.checked)"><span class="t"><b style="text-transform:none">${esc(x.n)}</b></span><button class="x" onclick="gmdel(${i})" aria-label="Remove">✕</button></div>`).join('')+
+  `<div class="gadd"><input id="gi" placeholder="Add an item…" onkeydown="if(event.key=='Enter')gadd()"><button class="b p" onclick="gadd()">Add</button></div>
+  <div class="btns" style="margin-top:14px"><button class="b" onclick="gshare()">📤 Share list</button><button class="b" onclick="gclear()">Clear ticks</button></div>
+  <p class="mu" style="margin-top:12px">Assumes salt, oil and basic spices are at home. Quantities aren’t calculated, so check what you already have.</p>`;
+  sheet('🛒 Grocery list',b);
+  const nb=document.querySelector('.sheet .bd');if(nb)nb.scrollTop=top;
+}
+const gwk=n=>{ws.setDate(ws.getDate()+n);cur=iso(ws);gView()};
+function gtick(i,v){const k=ctx.gk[i];if(v)S.gchk[k]=1;else delete S.gchk[k];save();gView()}
+function gmtick(i,v){S.gman[i].d=v;save();gView()}
+function gmdel(i){S.gman.splice(i,1);save();gView()}
+function gadd(){const e=$('gi'),n=e.value.trim();if(!n)return;S.gman.push({n,d:false});save();gView();$('gi').focus()}
+function gclear(){const p=iso(ws)+'|';Object.keys(S.gchk).forEach(k=>{if(k.startsWith(p))delete S.gchk[k]});S.gman.forEach(x=>x.d=false);save();gView()}
+async function gshare(){
+  const D=gdata();let t='Grocery list ('+lab(D.days[0])+' – '+lab(D.days[6])+')\n';
+  D.order.forEach(c=>{const r=D.groups[c].filter(o=>!S.gchk[o.k]);if(r.length)t+='\n'+c+'\n'+r.map(o=>'- '+o.g).join('\n')+'\n'});
+  const m=S.gman.filter(x=>!x.d);if(m.length)t+='\nOther\n'+m.map(x=>'- '+x.n).join('\n')+'\n';
+  try{if(navigator.share){await navigator.share({title:'Grocery list',text:t});return}}catch(e){if(e&&e.name=='AbortError')return}
+  try{await navigator.clipboard.writeText(t);toast('List copied')}catch(e){prompt('Copy your list',t)}
+}
+
+function openSettings(){
+  sheet('Settings',`<label class="l">Suggest meals that are…</label>
+  <select onchange="S.goal=this.value;save()">${Object.keys(GOALS).map(k=>`<option value="${k}" ${S.goal==k?'selected':''}>${GOALS[k][0]}</option>`).join('')}</select>
+  <label class="chk"><input type="checkbox" ${S.veg?'checked':''} onchange="S.veg=this.checked?1:0;save()"> Vegetarian only (hides egg, chicken, fish)</label>
+  <p class="mu">Your plan is saved on this device only. Another phone starts with its own empty plan.</p>`);
+}
+
+render();
+try{
+  const m={name:'MealPlan',short_name:'MealPlan',start_url:'.',display:'standalone',background_color:'#f6f7f5',theme_color:'#2f7d5b',icons:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#2f7d5b"/><text x="50" y="68" font-size="56" text-anchor="middle">🍽️</text></svg>'),sizes:'512x512',type:'image/svg+xml',purpose:'any'}]};
+  const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/json'}));document.head.appendChild(l);
+  if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+}catch(e){}
+</script>
+</body>
+</html>
